@@ -77,7 +77,7 @@
     // ---------------- weather card ----------------
     async function loadWeather(lat, lon, label) {
         try {
-            const w = await CD.api(`/api/weather/risk?lat=${lat}&lon=${lon}`);
+            const w = await CD.weatherRisk(lat, lon);
             const t = w.days[0];
             CD.$("#wxCard").innerHTML = `
                 <div class="d-flex justify-content-between"><div class="small-caps">Disease weather · ${CD.esc(label)}</div><i class="bi bi-arrow-up-right text-muted"></i></div>

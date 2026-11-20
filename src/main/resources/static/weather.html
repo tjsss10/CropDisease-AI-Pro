@@ -47,7 +47,7 @@
         CD.$("#where").innerHTML = `<i class="bi bi-pin-map text-lime"></i> ${CD.esc(label)}`;
         CD.$("#wx").innerHTML = `<div class="glass text-muted"><span class="spin bi bi-arrow-repeat"></span> Getting forecast...</div>`;
         try {
-            forecast = await CD.api(`/api/weather/risk?lat=${lat}&lon=${lon}`);
+            forecast = await CD.weatherRisk(lat, lon);
             dayIdx = 0;
             render();
             if (me && !me.latitude) {   // remember the farm location

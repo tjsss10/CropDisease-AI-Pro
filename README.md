@@ -6,7 +6,17 @@ a colour heatmap of the lesions, and an organic + chemical treatment plan with a
 Built the same way as FitJanta: **Spring Boot (Java) + MySQL + plain HTML / CSS / JS (Bootstrap 5)**,
 Gradle wrapper, one-click start script and a QR page for phones.
 
-## Run it
+## Permanent link
+
+**https://cropdisease-ai-pro.onrender.com** (Render free web service, built from this repo's `Dockerfile`, Singapore).
+Every `git push` to `main` redeploys automatically. Free instances sleep after ~15 min idle; the first visit then takes ~30-60 s.
+
+Storage in the cloud: without database settings the app uses a built-in in-memory database (disease library always
+loaded; accounts & scans reset when the instance restarts). To keep data permanently, add `DB_URL`, `DB_USER`,
+`DB_PASSWORD` (e.g. TiDB Cloud MySQL, `jdbc:mysql://HOST:4000/cropdisease?sslMode=REQUIRED&createDatabaseIfNotExist=true`)
+under Render > cropdisease-ai-pro > Environment.
+
+## Run it locally
 
 1. Make sure MySQL (service `MYSQL80`) is running.
 2. Double-click **`start-cropdisease.bat`**. It waits for MySQL, starts the server and opens the QR page.

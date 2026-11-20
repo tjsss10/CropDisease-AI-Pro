@@ -110,6 +110,24 @@ const CD = (() => {
         return "bi-cloud-lightning-rain";
     }
 
+    /**
+     * 7-day disease-risk forecast. The server fetches the weather; if the cloud server is
+     * rate-limited by the free weather API, the browser fetches it and the server still computes the risk.
+     */
+    async function weatherRisk(lat, lon) {
+        try {
+            return await api(`/api/weather/risk?lat=${lat}&lon=${lon}`);
+        } catch (e) {
+            if (e.status !== 503) throw e;
+            const q = await api("/api/weather/query");
+            let res;
+            try { res = await fetch(`${q.url}?latitude=${(+lat).toFixed(4)}&longitude=${(+lon).toFixed(4)}&${q.query}`); }
+            catch (err) { throw new Error("Weather service is not reachable. Check the internet connection."); }
+            if (!res.ok) throw new Error("Weather service is busy. Please try again in a minute.");
+            return api("/api/weather/risk", { method: "POST", body: await res.json() });
+        }
+    }
+
     function speak(text) {
         if (!("speechSynthesis" in window)) { toast("Voice is not supported in this browser."); return; }
         speechSynthesis.cancel();
@@ -358,5 +376,5 @@ const CD = (() => {
     }
 
     return { user, setUser, logout, requireUser, api, esc, $, split, pct, toast, fmtDate, timeAgo, initials,
-        crops, cropName, cropEmoji, typeBadge, sevBadge, sevColor, weatherIcon, speak, shell, renderResult };
+        crops, cropName, cropEmoji, typeBadge, sevBadge, sevColor, weatherIcon, weatherRisk, speak, shell, renderResult };
 })();

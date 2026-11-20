@@ -65,14 +65,49 @@ public class WeatherRiskService {
 
     public Forecast forecast(double lat, double lon) throws Exception {
         if (lat < -90 || lat > 90 || lon < -180 || lon > 180) throw new IllegalArgumentException("That location doesn't look right.");
-        String url = String.format(Locale.ROOT,
-                "%s?latitude=%.4f&longitude=%.4f&timezone=auto&forecast_days=7"
-                        + "&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code"
-                        + "&hourly=temperature_2m,relative_humidity_2m,precipitation"
-                        + "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code,relative_humidity_2m_mean",
-                forecastUrl, lat, lon);
-        JsonNode root = get(url);
+        // Same place (~1 km) within 30 minutes -> reuse; keeps us well under the free API rate limit
+        String key = String.format(Locale.ROOT, "%.2f,%.2f", lat, lon);
+        Cached hit = cache.get(key);
+        if (hit != null && System.currentTimeMillis() - hit.at() < 30 * 60_000L) return hit.forecast();
 
+        String url = String.format(Locale.ROOT, "%s?latitude=%.4f&longitude=%.4f&" + QUERY, forecastUrl, lat, lon);
+        JsonNode root;
+        try {
+            root = get(url);
+        } catch (IllegalStateException first) {
+            Thread.sleep(1500);            // one retry (rate limits are often momentary)
+            root = get(url);
+        }
+        Forecast f = fromOpenMeteo(root);
+        if (cache.size() > 500) cache.clear();
+        cache.put(key, new Cached(System.currentTimeMillis(), f));
+        return f;
+    }
+
+    /** Open-Meteo query parameters (also used by the browser fallback in weather.html / home.html). */
+    public static final String QUERY = "timezone=auto&forecast_days=7"
+            + "&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code"
+            + "&hourly=temperature_2m,relative_humidity_2m,precipitation"
+            + "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code,relative_humidity_2m_mean";
+
+    private record Cached(long at, Forecast forecast) { }
+
+    private final Map<String, Cached> cache = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** Risk model from raw Open-Meteo JSON (fetched by the server, or by the visitor's browser as a fallback). */
+    public Forecast fromOpenMeteo(String rawJson) {
+        JsonNode root;
+        try {
+            root = json.readTree(rawJson);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Weather data could not be read.");
+        }
+        if (!root.path("daily").path("time").isArray() || !root.path("hourly").path("time").isArray())
+            throw new IllegalArgumentException("Weather data is incomplete.");
+        return fromOpenMeteo(root);
+    }
+
+    private Forecast fromOpenMeteo(JsonNode root) {
         Map<String, Object> current = new LinkedHashMap<>();
         JsonNode c = root.path("current");
         current.put("temperature", c.path("temperature_2m").asDouble());

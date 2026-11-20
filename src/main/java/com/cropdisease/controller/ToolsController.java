@@ -34,6 +34,18 @@ public class ToolsController {
         return weather.forecast(lat, lon);
     }
 
+    /** Fallback: the browser fetched Open-Meteo itself (cloud server rate-limited); compute the risk here. */
+    @PostMapping(value = "/weather/risk", consumes = "application/json")
+    public WeatherRiskService.Forecast riskFromData(@RequestBody String openMeteoJson) {
+        if (openMeteoJson.length() > 400_000) throw new IllegalArgumentException("Weather data is too large.");
+        return weather.fromOpenMeteo(openMeteoJson);
+    }
+
+    @GetMapping("/weather/query")
+    public Map<String, String> weatherQuery() {
+        return Map.of("url", "https://api.open-meteo.com/v1/forecast", "query", WeatherRiskService.QUERY);
+    }
+
     @GetMapping("/spray/products")
     public Collection<SprayCalculator.Product> products() {
         return SprayCalculator.PRODUCTS.values();
