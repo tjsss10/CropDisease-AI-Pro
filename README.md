@@ -1,4 +1,20 @@
-# CropDisease AI Pro (v2)
+<p align="center">
+  <img src="docs/banner.svg" alt="CropDisease AI Pro — AI crop doctor" width="640">
+</p>
+
+<p align="center">
+  <a href="https://cropdisease-ai-pro.onrender.com"><img src="https://img.shields.io/badge/Live_app-cropdisease--ai--pro.onrender.com-22C55E?style=for-the-badge&labelColor=0B1220" alt="Live app"></a>
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Java_17-ED8B00?style=flat-square&logo=openjdk&logoColor=white" alt="Java 17">
+  <img src="https://img.shields.io/badge/Spring_Boot_4-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white" alt="MySQL">
+  <img src="https://img.shields.io/badge/Computer_Vision-pure_Java-A3E635?style=flat-square" alt="Computer vision">
+  <img src="https://img.shields.io/badge/Chart.js-FF6384?style=flat-square&logo=chartdotjs&logoColor=white" alt="Chart.js">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker">
+</p>
+
+# 🌾 CropDisease AI Pro (v2)
 
 AI crop doctor: photograph a leaf and get the disease, a confidence score, how much of the leaf is affected,
 a colour heatmap of the lesions, and an organic + chemical treatment plan with a 14-day schedule.
