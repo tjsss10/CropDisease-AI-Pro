@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>CropDisease AI Pro · AI crop doctor</title>
+    <meta name="description" content="Detect crop leaf diseases from a photo, get treatment plans, weather disease-risk alerts and a farm assistant.">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <meta name="theme-color" content="#060D0A">
+    <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+    <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+<div class="bg-orbs"><span></span><span></span><span></span></div>
+<div class="container" style="max-width:1180px">
+    <nav class="nav-land">
+        <a href="index.html" class="brand p-0"><span class="brand-mark"><i class="bi bi-flower1"></i></span>
+            <span><b>CropDisease <span class="text-grad">AI</span></b><small>Pro · v2</small></span></a>
+        <div class="d-flex gap-2" id="navBtns">
+            <a href="login.html" class="btn btn-glass d-none d-sm-inline-block">Sign in</a>
+            <a href="scan.html" class="btn btn-grad">Try free scan</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="row align-items-center g-5 py-4 py-lg-5">
+        <div class="col-lg-6">
+            <span class="badge-soft b-green reveal d1"><i class="bi bi-stars"></i> AI crop doctor · works on any phone</span>
+            <h1 class="display-hero mt-3 reveal d2">Spot crop disease <span class="text-grad">before it spreads.</span></h1>
+            <p class="fs-5 text-muted mt-3 reveal d3" style="max-width:520px">Take a photo of a leaf. CropDisease AI finds the disease, measures how much of the leaf is affected, shows a heatmap and gives you an organic + chemical treatment plan.</p>
+            <div class="d-flex flex-wrap gap-2 mt-4 reveal d4">
+                <a href="scan.html" class="btn btn-grad btn-lg"><i class="bi bi-camera-fill"></i> Scan a leaf now</a>
+                <a href="signup.html" class="btn btn-glass btn-lg">Create free account</a>
+            </div>
+            <div class="d-flex gap-4 mt-4 reveal d5">
+                <div><div class="stat-val text-grad">11</div><div class="small text-muted">crops</div></div>
+                <div><div class="stat-val text-grad">45</div><div class="small text-muted">diseases & disorders</div></div>
+                <div><div class="stat-val text-grad">&lt;2s</div><div class="small text-muted">per diagnosis</div></div>
+                <div><div class="stat-val text-grad">7-day</div><div class="small text-muted">weather risk</div></div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="hero-visual reveal d3">
+                <div class="leaf-card scanning">
+                    <svg viewBox="0 0 200 200" width="78%" aria-hidden="true">
+                        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#15803D"/></linearGradient></defs>
+                        <path d="M100 12 C150 40 178 90 160 140 C145 178 110 192 100 192 C90 192 55 178 40 140 C22 90 50 40 100 12Z" fill="url(#lg)"/>
+                        <path d="M100 20 L100 190 M100 60 L70 45 M100 60 L130 45 M100 95 L60 75 M100 95 L140 75 M100 130 L62 112 M100 130 L138 112 M100 160 L75 148 M100 160 L125 148" stroke="#166534" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        <circle cx="72" cy="92" r="10" fill="#92400E"/><circle cx="72" cy="92" r="5" fill="#451A03"/>
+                        <circle cx="128" cy="120" r="13" fill="#92400E"/><circle cx="128" cy="120" r="6" fill="#451A03"/>
+                        <circle cx="118" cy="62" r="6" fill="#A16207"/><circle cx="80" cy="140" r="7" fill="#92400E"/>
+                        <circle cx="72" cy="92" r="16" fill="none" stroke="#FACC15" stroke-width="2" opacity=".7"/>
+                        <circle cx="128" cy="120" r="20" fill="none" stroke="#FACC15" stroke-width="2" opacity=".7"/>
+                    </svg>
+                </div>
+                <div class="float-chip" style="top:6%;left:0"><i class="bi bi-bug text-red"></i> Early Blight · <span class="text-lime">87%</span></div>
+                <div class="float-chip" style="bottom:12%;right:0;animation-delay:-2s"><i class="bi bi-heart-pulse text-amber"></i> Health score 71/100</div>
+                <div class="float-chip" style="bottom:2%;left:6%;animation-delay:-3.5s"><i class="bi bi-cloud-rain text-sky"></i> Blight risk high Thu</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="py-5">
+        <div class="text-center mb-5">
+            <div class="small-caps text-lime">Everything a farmer needs</div>
+            <h2 class="fw-800 display-6" style="letter-spacing:-.02em">One app. Your whole crop clinic.</h2>
+        </div>
+        <div class="row g-3" id="features"></div>
+    </section>
+
+    <!-- HOW -->
+    <section class="py-5">
+        <div class="glass p-4 p-lg-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-5">
+                    <div class="small-caps text-lime">How the AI works</div>
+                    <h2 class="fw-800 mt-2">Real computer vision, explained.</h2>
+                    <p class="text-muted">The Java vision engine separates the leaf from the background, classifies every pixel (healthy green, chlorosis, necrosis, dark lesions, powdery growth, rust), counts and measures lesions, then compares the pattern with the signature of every disease for that crop.</p>
+                    <p class="text-muted small mb-0"><i class="bi bi-info-circle"></i> It is an assistant, not a lab test. Low-confidence results are clearly marked so you can confirm with a second photo or your local agriculture officer.</p>
+                </div>
+                <div class="col-lg-7">
+                    <div class="row g-3">
+                        <div class="col-6"><div class="glass glass-sm h-100"><span class="badge-soft b-green">1</span><b class="d-block mt-2">Leaf segmentation</b><span class="small text-muted">HSV colour model, morphology & hole filling</span></div></div>
+                        <div class="col-6"><div class="glass glass-sm h-100"><span class="badge-soft b-amber">2</span><b class="d-block mt-2">Lesion detection</b><span class="small text-muted">6 tissue classes, spot counting, margin analysis</span></div></div>
+                        <div class="col-6"><div class="glass glass-sm h-100"><span class="badge-soft b-sky">3</span><b class="d-block mt-2">Signature matching</b><span class="small text-muted">colour cosine + spread pattern + your symptoms</span></div></div>
+                        <div class="col-6"><div class="glass glass-sm h-100"><span class="badge-soft b-violet">4</span><b class="d-block mt-2">Treatment plan</b><span class="small text-muted">organic, chemical, prevention & 14-day schedule</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 text-center">
+        <h2 class="fw-800 display-6">Ready to check your field?</h2>
+        <p class="text-muted">No account needed for your first scan.</p>
+        <a href="scan.html" class="btn btn-grad btn-lg mt-2"><i class="bi bi-camera-fill"></i> Start scanning</a>
+        <div class="d-flex justify-content-center gap-3 mt-4 small text-muted">
+            <a href="qr.html" class="text-muted"><i class="bi bi-qr-code"></i> Open on phone</a>
+            <a href="library.html" class="text-muted"><i class="bi bi-journal-medical"></i> Disease library</a>
+            <a href="weather.html" class="text-muted"><i class="bi bi-cloud-sun"></i> Weather risk</a>
+        </div>
+    </section>
+    <footer class="text-center text-muted small py-4">CropDisease AI Pro v2 · Spring Boot + MySQL · Built for farmers</footer>
+</div>
+<script src="js/app.js"></script>
+<script>
+    const u = CD.user();
+    if (u) CD.$("#navBtns").innerHTML = `<a href="home.html" class="btn btn-grad"><i class="bi bi-grid-1x2"></i> Open dashboard</a>`;
+    const F = [
+        ["bi-camera", "ico-green", "AI leaf scan", "Disease, confidence, % leaf affected, severity stage and a colour heatmap of every lesion."],
+        ["bi-ui-checks-grid", "ico-amber", "Symptom checker", "No photo? Tick what you see and get the most likely diseases ranked."],
+        ["bi-cloud-lightning-rain", "ico-sky", "Weather disease risk", "7-day blight, rust, mildew and bacterial risk from live local weather."],
+        ["bi-journal-medical", "ico-violet", "Disease library", "45 diseases with symptoms, causes, organic & chemical control and prevention."],
+        ["bi-droplet-half", "ico-teal", "Spray calculator", "Exact product dose, water, tanks and cost for your field area."],
+        ["bi-chat-dots", "ico-red", "Krishi Mitra assistant", "Ask questions in plain words (voice too) and get instant answers."],
+        ["bi-graph-up-arrow", "ico-green", "Farm dashboard", "Health trend, disease breakdown and scouting streak saved in MySQL."],
+        ["bi-file-earmark-pdf", "ico-amber", "PDF reports", "Printable scan report to share with your agronomist or KVK."],
+    ];
+    CD.$("#features").innerHTML = F.map(([i, c, t, d], k) => `<div class="col-sm-6 col-lg-3"><div class="glass h-100 hoverable reveal d${(k % 5) + 1}">
+        <div class="feature-ico ${c}"><i class="bi ${i}"></i></div><h6 class="fw-800">${t}</h6><p class="small text-muted mb-0">${d}</p></div></div>`).join("");
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+bin/
+out/
+*.log
+.idea
+*.iml
+### Local-only (MySQL password) ###
+/config/
+
+### Local test output ###
+bootrun.log

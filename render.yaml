@@ -1,0 +1,20 @@
+# Render Blueprint: creates the CropDisease AI Pro web service from the Dockerfile.
+# Optional cloud MySQL login values are entered in the Render dashboard (never stored here).
+# Without them the app runs on its built-in in-memory database.
+services:
+  - type: web
+    name: cropdisease-ai-pro
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_POOL_SIZE
+        value: "4"

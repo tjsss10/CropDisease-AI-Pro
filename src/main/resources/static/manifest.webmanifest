@@ -1,0 +1,12 @@
+{
+  "name": "CropDisease AI Pro",
+  "short_name": "CropDisease",
+  "description": "AI crop doctor: leaf disease scan, treatment plans and weather disease risk.",
+  "start_url": "/home.html",
+  "display": "standalone",
+  "background_color": "#060D0A",
+  "theme_color": "#060D0A",
+  "icons": [
+    { "src": "img/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

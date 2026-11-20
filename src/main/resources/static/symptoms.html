@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Symptom Checker · CropDisease AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <meta name="theme-color" content="#060D0A">
+    <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+</head>
+<body>
+<div class="bg-orbs"><span></span><span></span><span></span></div>
+<div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main"><div class="content">
+        <div class="mobile-head align-items-center mb-3" id="mobileHead"></div>
+        <div class="topbar">
+            <div class="flex-grow-1"><div class="small-caps">No photo? No problem</div><h1>Symptom Checker</h1>
+                <div class="sub">Pick the crop, tick what you see in the field, and get the most likely diseases.</div></div>
+        </div>
+        <div class="row g-3">
+            <div class="col-lg-7">
+                <div class="glass reveal d1 mb-3">
+                    <div class="small-caps mb-2">1 · Crop</div>
+                    <div class="row g-2" id="cropGrid"></div>
+                </div>
+                <div class="glass reveal d2">
+                    <div class="d-flex justify-content-between align-items-center mb-2"><div class="small-caps">2 · Symptoms you see</div><span class="small text-muted" id="selCount">0 selected</span></div>
+                    <div class="chip-row" id="chips"></div>
+                    <button class="btn btn-grad btn-lg w-100 mt-4" id="go"><i class="bi bi-search-heart"></i> Find likely diseases</button>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="glass reveal d3 h-100" id="out">
+                    <div class="empty"><i class="bi bi-clipboard2-pulse"></i>Results appear here.<br><span class="small">The more symptoms you tick, the better the match.</span></div>
+                </div>
+            </div>
+        </div>
+    </div></main>
+</div>
+<nav class="bottom-nav" id="bottomNav"></nav>
+<script src="js/app.js"></script>
+<script>
+    CD.shell("symptoms");
+    let crop = "", labels = {};
+    const sel = new Set();
+    (async () => {
+        const crops = await CD.crops();
+        const g = CD.$("#cropGrid");
+        g.innerHTML = `<div class="col-4 col-md-2"><div class="crop-tile active" data-c=""><span class="em">🌍</span><b>Any</b></div></div>` +
+            crops.filter(c => c.code !== "general").map(c => `<div class="col-4 col-md-2"><div class="crop-tile" data-c="${c.code}"><span class="em">${c.emoji}</span><b>${CD.esc(c.name.split(" ")[0])}</b></div></div>`).join("");
+        g.addEventListener("click", e => {
+            const t = e.target.closest(".crop-tile"); if (!t) return;
+            crop = t.dataset.c;
+            g.querySelectorAll(".crop-tile").forEach(x => x.classList.toggle("active", x === t));
+        });
+        labels = await CD.api("/api/symptoms");
+        const box = CD.$("#chips");
+        box.innerHTML = Object.entries(labels).map(([k, v]) => `<span class="chip" data-s="${k}">${CD.esc(v)}</span>`).join("");
+        box.addEventListener("click", e => {
+            const c = e.target.closest(".chip"); if (!c) return;
+            sel.has(c.dataset.s) ? sel.delete(c.dataset.s) : sel.add(c.dataset.s);
+            c.classList.toggle("active");
+            CD.$("#selCount").textContent = sel.size + " selected";
+        });
+    })();
+
+    CD.$("#go").onclick = async () => {
+        try {
+            const res = await CD.api("/api/symptom-check", { method: "POST", body: { crop, symptoms: [...sel] } });
+            const crops = await CD.crops();
+            CD.$("#out").innerHTML = `<div class="small-caps">Most likely</div><h5 class="fw-800 mb-3">${res.length} possible matches</h5>` +
+                (res.length ? res.map((c, i) => {
+                    const cr = crops.find(x => x.code === c.cropCode) || {};
+                    return `<a href="disease.html?code=${c.code}" class="glass glass-sm d-block text-decoration-none text-reset hoverable mb-2 ${i === 0 ? "card-outline-grad" : ""}">
+                        <div class="d-flex align-items-center gap-3"><span class="fs-3">${cr.emoji || "🌿"}</span>
+                        <div class="flex-grow-1"><b class="d-block">${CD.esc(c.name)}</b><span class="small text-muted">${CD.esc(cr.name || "")} · ${c.type}</span>
+                        <div class="meter mt-2" style="height:6px"><span style="width:${Math.round(c.probability * 100)}%"></span></div></div>
+                        <b class="${i === 0 ? "text-lime" : ""}">${Math.round(c.probability * 100)}%</b></div></a>`;
+                }).join("") + `<a href="scan.html${crop ? "?crop=" + crop : ""}" class="btn btn-glass w-100 mt-2"><i class="bi bi-camera"></i> Confirm with a leaf photo</a>`
+                    : `<div class="empty"><i class="bi bi-question-circle"></i>No disease in the library matches those symptoms for this crop.</div>`);
+        } catch (e) { CD.toast(e.message, "err"); }
+    };
+</script>
+</body>
+</html>

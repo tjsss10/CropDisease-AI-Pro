@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Spray Calculator · CropDisease AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <meta name="theme-color" content="#060D0A">
+    <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+</head>
+<body>
+<div class="bg-orbs"><span></span><span></span><span></span></div>
+<div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main"><div class="content">
+        <div class="mobile-head align-items-center mb-3" id="mobileHead"></div>
+        <div class="topbar">
+            <div class="flex-grow-1"><div class="small-caps">Mix it right</div><h1>Spray Calculator</h1>
+                <div class="sub">Exact product quantity, water, number of tanks and cost for your field.</div></div>
+        </div>
+        <div class="row g-3">
+            <div class="col-lg-5">
+                <form class="glass reveal d1" id="form">
+                    <label class="form-label">Product</label>
+                    <select class="form-select mb-1" id="product"></select>
+                    <div class="small text-muted mb-3" id="pInfo"></div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-7"><label class="form-label">Field area</label><input type="number" step="0.01" min="0.01" class="form-control" id="area" value="1" required></div>
+                        <div class="col-5"><label class="form-label">Unit</label><select class="form-select" id="unit"><option value="acre">Acre</option><option value="hectare">Hectare</option><option value="guntha">Guntha</option></select></div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6"><label class="form-label">Water / acre (L)</label><input type="number" class="form-control" id="wpa" value="200"></div>
+                        <div class="col-6"><label class="form-label">Tank size (L)</label><input type="number" class="form-control" id="tank" value="16"></div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6"><label class="form-label">Pack price (₹)</label><input type="number" class="form-control" id="price" placeholder="optional"></div>
+                        <div class="col-6"><label class="form-label">Pack size (g / ml)</label><input type="number" class="form-control" id="pack" placeholder="e.g. 500"></div>
+                    </div>
+                    <button class="btn btn-grad btn-lg w-100"><i class="bi bi-calculator"></i> Calculate</button>
+                    <div class="small text-muted mt-2"><i class="bi bi-info-circle"></i> Field crops usually need 150-250 L water per acre; orchards up to 400 L.</div>
+                </form>
+            </div>
+            <div class="col-lg-7"><div id="out" class="glass h-100 reveal d2"><div class="empty"><i class="bi bi-droplet-half"></i>Fill the form to see your spray mix.</div></div></div>
+        </div>
+    </div></main>
+</div>
+<nav class="bottom-nav" id="bottomNav"></nav>
+<script src="js/app.js"></script>
+<script>
+    CD.shell("spray");
+    let products = [];
+    (async () => {
+        products = await CD.api("/api/spray/products");
+        CD.$("#product").innerHTML = products.map(p => `<option value="${p.code}">${CD.esc(p.name)} — ${p.dosePerLitre} ${p.unit}/L</option>`).join("");
+        info();
+        CD.$("#form").requestSubmit();
+    })();
+    CD.$("#product").onchange = info;
+    function info() {
+        const p = products.find(x => x.code === CD.$("#product").value);
+        if (p) CD.$("#pInfo").innerHTML = `${CD.esc(p.group)} · for ${CD.esc(p.targets)}`;
+    }
+    CD.$("#form").onsubmit = async e => {
+        e.preventDefault();
+        const num = id => CD.$("#" + id).value ? +CD.$("#" + id).value : null;
+        try {
+            const r = await CD.api("/api/spray/calculate", { method: "POST", body: {
+                product: CD.$("#product").value, area: num("area") || 0, areaUnit: CD.$("#unit").value,
+                waterPerAcre: num("wpa"), tankSize: num("tank"), price: num("price"), packSize: num("pack") } });
+            CD.$("#out").innerHTML = `
+                <div class="small-caps">${CD.esc(r.product.name)} · ${r.areaAcres} acres</div>
+                <h5 class="fw-800 mb-3">Your spray mix</h5>
+                <div class="row g-2 mb-3">
+                    <div class="col-6 col-md-3"><div class="glass glass-sm text-center h-100"><i class="bi bi-box-seam text-lime fs-4"></i><div class="stat-val mt-1">${r.productQuantity}</div><div class="text-muted small">${r.unit} product</div></div></div>
+                    <div class="col-6 col-md-3"><div class="glass glass-sm text-center h-100"><i class="bi bi-droplet text-sky fs-4"></i><div class="stat-val mt-1">${r.waterLitres}</div><div class="text-muted small">litres water</div></div></div>
+                    <div class="col-6 col-md-3"><div class="glass glass-sm text-center h-100"><i class="bi bi-backpack2 text-amber fs-4"></i><div class="stat-val mt-1">${r.tanks}</div><div class="text-muted small">tanks of ${r.tankSize} L</div></div></div>
+                    <div class="col-6 col-md-3"><div class="glass glass-sm text-center h-100"><i class="bi bi-currency-rupee text-red fs-4"></i><div class="stat-val mt-1">${r.cost != null ? "₹" + r.cost : "–"}</div><div class="text-muted small">product cost</div></div></div>
+                </div>
+                <div class="p-3 rounded-4 mb-3 card-grad"><b>Per tank: ${r.perTank} ${r.unit}</b> of product in ${r.tankSize} L water</div>
+                <h6 class="fw-800">Mixing steps</h6>
+                <div class="timeline mb-3">${r.steps.map((s, i) => `<div class="t-item"><b class="small text-lime d-block">Step ${i + 1}</b><span class="small">${CD.esc(s)}</span></div>`).join("")}</div>
+                <h6 class="fw-800">Safety</h6>
+                <ul class="tick-list warn small">${r.safety.map(s => `<li>${CD.esc(s)}</li>`).join("")}</ul>`;
+        } catch (err) { CD.toast(err.message, "err"); }
+    };
+</script>
+</body>
+</html>
